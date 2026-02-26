@@ -1,0 +1,43 @@
+import json
+
+from agentcore.custom.custom_node.node import Node
+from agentcore.io import MessageTextInput, Output
+from agentcore.schema.data import Data
+
+
+class CodeEditorNode(Node):
+    display_name = "Custom Code"
+    description = "Takes a user query and returns processed data."
+    icon = "Pythoncode"
+    name = "CustomComponent"
+
+    inputs = [
+        MessageTextInput(
+            name="input_value",
+            display_name="User Query",
+            info="Enter your query.",
+            value="",
+            tool_mode=True,
+        ),
+    ]
+
+    outputs = [
+        Output(display_name="Output", name="output", method="build_output"),
+    ]
+
+    def build_output(self) -> Data:
+        query = self.input_value
+
+        words = query.split()
+        result = {
+            "query": query,
+            "word_count": len(words),
+            "char_count": len(query),
+            "words": words,
+            "upper": query.upper(),
+            "reversed": query[::-1],
+        }
+
+        data = Data(data=result)
+        self.status = json.dumps(result, indent=2)
+        return data
